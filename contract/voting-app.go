@@ -220,7 +220,7 @@ func clearVoterFromQuestion(qId uint32, address string) {
 		panic(fmt.Sprintf("error while clearing old vote for answer %d: error %s", qId, err))
 	}
 	for i := range answerArray { // we don't care value only how many
-		votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, i),
+		votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, uint32(i)),
 			collections.DefaultStringSerializer,
 			collections.DefaultStringDeserializer,
 			collections.DefaultDeleter)
