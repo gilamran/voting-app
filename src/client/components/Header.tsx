@@ -81,7 +81,7 @@ const HeaderImpl = withStyles(styles)(
           <AppBar position='static'>
             <Toolbar>
               <div className={classes.title}>
-                <Typography variant='h5'>Voating App</Typography>
+                <Typography variant='h5'>Voting App</Typography>
               </div>
             </Toolbar>
           </AppBar>
