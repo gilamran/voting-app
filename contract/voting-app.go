@@ -15,10 +15,9 @@ import (
 var PUBLIC = sdk.Export(
 	getOwner,
 	getVoter, setVoterWeight,
-	getNumberOfQuestions, getQuestionString,
-	addBoolQuestion,
-
-//	vote,
+	getNumberOfQuestions, addBoolQuestion, addQuestion,
+	getQuestionString, getQuestionAnswerStrings, getQuestionAnswerVote, getQuestionAnswerVoters,
+	vote,
 )
 var SYSTEM = sdk.Export(_init)
 
@@ -67,8 +66,12 @@ func getVoter(address string) string {
 	return ""
 }
 
+func _getVoterMap() collections.Map {
+	return collections.NewStructMap(_formatVotersName(), Voter{})
+}
+
 func setVoterWeight(address string, weight uint32) {
-	voters := collections.NewStructMap(_formatVotersName(), Voter{})
+	voters := _getVoterMap()
 	address = strings.ToLower(address)
 	if weight == 0 {
 		voters.Remove(address)
@@ -93,34 +96,8 @@ func _generateNewQuestionId() uint32 {
 	state.WriteUint32(_formatNumberOfQuestionsKey(), qId)
 	return qId
 }
-
 func _formatQuestionStrKey(id uint32) []byte {
 	return []byte(fmt.Sprintf("_QuestionStr_%d_", id))
-}
-
-func _formatQuestionAnswersKey(id uint32) []byte {
-	return []byte(fmt.Sprintf("_QuestionAns_%d_", id))
-}
-
-func _formatAnswersStrKey(qId uint32, aId int) []byte {
-	return []byte(fmt.Sprintf("_QnAStr_%d_%d_", qId, aId))
-}
-
-func _formatAnswerVotesKey(qId uint32, aId int) string {
-	return fmt.Sprintf("_QnAVotes_%d_%d_", qId, aId)
-}
-
-func addBoolQuestion(question string) uint32 {
-	qId := _generateNewQuestionId()
-	_setQuestionString(qId, question)
-	//state.WriteString(_formatQuestionAnswersKey(qId), string(json.Marshal([]string{"No", "Yes"}))
-	//
-	//q := Question{
-	//	question:question,
-	//	answers:[]Answer{ *newAnswer(qId, 0, "No"), *newAnswer(qId, 1, "Yes")},
-	//}
-	//collections.DefaultStructSerializer(_formatQuestionKey(qId), q)
-	return qId
 }
 
 func getQuestionString(id uint32) string {
@@ -129,6 +106,101 @@ func getQuestionString(id uint32) string {
 
 func _setQuestionString(id uint32, question string) {
 	state.WriteString(_formatQuestionStrKey(id), question)
+}
+
+func _formatQuestionAnswersKey(id uint32) []byte {
+	return []byte(fmt.Sprintf("_QuestionAns_%d_", id))
+}
+
+func getQuestionAnswerStrings(id uint32) string {
+	return string(state.ReadBytes(_formatQuestionAnswersKey(id)))
+}
+
+func _setQuestionAnswerStrings(id uint32, answers []string) {
+	data, err := json.Marshal(answers)
+	if err != nil {
+		panic(fmt.Sprintf("error while saving answer strings %s", err))
+	}
+	state.WriteBytes(_formatQuestionAnswersKey(id), data)
+}
+
+func _formatAnswerVotesKey(qId uint32, aId int) string {
+	return fmt.Sprintf("_QnAVotes_%d_%d_", qId, aId)
+}
+
+func getQuestionAnswerVoters(qId uint32, aId int) string {
+	votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, aId),
+		collections.DefaultStringSerializer,
+		collections.DefaultStringDeserializer,
+		collections.DefaultDeleter)
+
+	var voters []string
+	votersCollection.Iterate(func(id uint64, item interface{}) bool {
+		voters = append(voters, item.(string))
+		return true
+	})
+
+	data, err := json.Marshal(voters)
+	if err != nil {
+		panic(fmt.Sprintf("error while saving answer strings %s", err))
+	}
+	return string(data)
+}
+
+func _setQuestionAnswerVoters(qId uint32, aId int, address string) {
+	votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, aId),
+		collections.DefaultStringSerializer,
+		collections.DefaultStringDeserializer,
+		collections.DefaultDeleter)
+
+	votersCollection.Add(address)
+}
+
+func getQuestionAnswerVote(qId uint32, aId int) uint32 {
+	votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, aId),
+		collections.DefaultStringSerializer,
+		collections.DefaultStringDeserializer,
+		collections.DefaultDeleter)
+
+	voterMap := _getVoterMap()
+	totalVote := uint32(0)
+	votersCollection.Iterate(func(id uint64, item interface{}) bool {
+		if voterMap.Contains(item.(string)) {
+			totalVote = safeuint32.Add(totalVote, voterMap.Get(item.(string)).(Voter).weight)
+		}
+		return true
+	})
+
+	return totalVote
+}
+
+func addBoolQuestion(question string) uint32 {
+	qId := _generateNewQuestionId()
+	_setQuestionString(qId, question)
+	_setQuestionAnswerStrings(qId, []string{"No", "Yes"})
+	return qId
+}
+
+func addQuestion(question string, answers string) uint32 {
+	qId := _generateNewQuestionId()
+	_setQuestionString(qId, question)
+	var answerArray []string
+	err := json.Unmarshal([]byte(answers), answerArray)
+	if err != nil {
+		panic(fmt.Sprintf("error while adding answer strings %s", err))
+	}
+	_setQuestionAnswerStrings(qId, answerArray)
+	return qId
+}
+
+func vote(qId uint32, aId uint32) {
+	address := strings.ToLower(fmt.Sprintf("%x", address.GetSignerAddress()))
+	voters := collections.NewStructMap(_formatVotersName(), Voter{})
+	if !voters.Contains(address) {
+		panic(fmt.Sprintf("voter %s, is not allowed to vote in this contract", address))
+	} else {
+		_setQuestionAnswerVoters(qId, int(aId), address)
+	}
 }
 
 //
@@ -170,13 +242,4 @@ func _setQuestionString(id uint32, question string) {
 //	return qId
 //}
 //
-//func vote(quid uint32, aid uint32) {
-//	address := strings.ToLower(fmt.Sprintf("%x", address.GetSignerAddress()))
-//	voters := collections.NewStructMap(_formatVotersName(), Voter{})
-//	if !voters.Contains(address) {
-//		panic(fmt.Sprintf("voter %s, is not allowed to vote in this contract", address))
-//	} else {
-//
-//	}
-//}
 //
