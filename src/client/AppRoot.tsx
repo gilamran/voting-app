@@ -14,18 +14,15 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { Background } from './components/Background';
 import { Header } from './components/Header';
+import { AccountInfo } from './components/AccountInfo';
 
 const appVersion = (window as any).appVersion;
 
 const baseTheme = createMuiTheme({
   palette: {
-    type: 'dark',
-    primary: { main: 'rgba(16, 34, 91, 0.7)' },
-    secondary: { main: '#7ccbf4' },
-    background: {
-      default: '#16317d',
-      paper: 'rgba(0, 31, 107, 0.6)',
-    },
+    type: 'light',
+    primary: { main: '#ffeb3b' },
+    secondary: { main: '#651fff' },
   },
   typography: {
     fontFamily: 'Montserrat',
@@ -45,7 +42,6 @@ const styles = (theme: Theme) =>
       margin: 'auto',
       paddingLeft: theme.spacing.unit * 2,
       paddingRight: theme.spacing.unit * 2,
-      position: 'relative',
       maxWidth: 1100,
     },
   });
@@ -59,6 +55,7 @@ export const AppRoot = withStyles(styles)(({ classes }: IProps) => (
       <Background appVersion={appVersion} />
       <Header />
       <div className={classes.appContainer}>
+        <AccountInfo />
         <App />
       </div>
     </MuiThemeProvider>
