@@ -18,7 +18,7 @@ var PUBLIC = sdk.Export(
 	getVoterWeight, setVoterWeight, getAllVoters,
 	getNumberOfQuestions, addBoolQuestion, addQuestion,
 	getQuestionString, getQuestionAnswerStrings, getQuestionAnswerVote, getQuestionAnswerVoters,
-	vote,
+	vote, clearVoterFromQuestion,
 )
 var SYSTEM = sdk.Export(_init)
 
@@ -53,6 +53,10 @@ func _formatVotersName() string {
 	return "_Voters_"
 }
 
+func _getVoterMap() collections.Map {
+	return collections.NewStructMap(_formatVotersName(), Voter{})
+}
+
 func getVoterWeight(address string) uint32 {
 	voterMap := collections.NewStructMap(_formatVotersName(), Voter{})
 	address = strings.ToLower(address)
@@ -60,10 +64,6 @@ func getVoterWeight(address string) uint32 {
 		return voterMap.Get(address).(Voter).weight
 	}
 	return 0
-}
-
-func _getVoterMap() collections.Map {
-	return collections.NewStructMap(_formatVotersName(), Voter{})
 }
 
 func setVoterWeight(address string, weight uint32) {
@@ -112,6 +112,7 @@ func _advanceQuestionId() uint32 {
 	state.WriteUint32(_formatNumberOfQuestionsKey(), qId)
 	return qId
 }
+
 func _formatQuestionStrKey(id uint32) []byte {
 	return []byte(fmt.Sprintf("_QuestionStr_%d_", id))
 }
@@ -163,15 +164,6 @@ func getQuestionAnswerVoters(qId uint32, aId int) string {
 	return string(data)
 }
 
-func _setQuestionAnswerVoters(qId uint32, aId int, address string) {
-	votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, aId),
-		collections.DefaultStringSerializer,
-		collections.DefaultStringDeserializer,
-		collections.DefaultDeleter)
-
-	votersCollection.Add(address)
-}
-
 func getQuestionAnswerVote(qId uint32, aId int) uint32 {
 	votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, aId),
 		collections.DefaultStringSerializer,
@@ -220,53 +212,38 @@ func addQuestion(question string, answers string) uint32 {
 /***
  * Vote
  */
+func clearVoterFromQuestion(qId uint32, address string) {
+	answersStr := getQuestionAnswerStrings(qId)
+	var answerArray []string
+	err := json.Unmarshal([]byte(answersStr), answerArray)
+	if err != nil {
+		panic(fmt.Sprintf("error while clearing old vote for answer %d: error %s", qId, err))
+	}
+	for i := range answerArray { // we don't care value only how many
+		votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, i),
+			collections.DefaultStringSerializer,
+			collections.DefaultStringDeserializer,
+			collections.DefaultDeleter)
+		votersCollection.Remove(uint64(i))
+	}
+}
+
+func _addVoterToQuestionAnswer(qId uint32, aId int, address string) {
+	votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, aId),
+		collections.DefaultStringSerializer,
+		collections.DefaultStringDeserializer,
+		collections.DefaultDeleter)
+
+	votersCollection.Add(address)
+}
+
 func vote(qId uint32, aId uint32) {
 	address := strings.ToLower(fmt.Sprintf("%x", address.GetSignerAddress()))
 	voterMap := collections.NewStructMap(_formatVotersName(), Voter{})
 	if !voterMap.Contains(address) {
 		panic(fmt.Sprintf("voter %s, is not allowed to vote in this contract", address))
-	} else {
-		_setQuestionAnswerVoters(qId, int(aId), address)
 	}
-}
 
-//
-//
-//type Answer struct {
-//	answer string
-//	voters collections.UniqueList
-//}
-//
-//type Question struct {
-//	question string
-//	answers []Answer
-//}
-//
-//func _formatQuestionKey(id uint32) []byte {
-//	return []byte(fmt.Sprintf("_Question_%d_",id))
-//}
-//func _formatQuestionAnswerKey(qId uint32, aId int) string {
-//	return fmt.Sprintf("_QnA_%d_%d_", qId, aId)
-//}
-//
-//func newAnswer(qId uint32, aId int, answer string) *Answer {
-//	return &Answer{ answer: answer,
-//		voters:collections.NewUniqueList(
-//			_formatQuestionAnswerKey(qId,aId),
-//			collections.DefaultStringSerializer,
-//			collections.DefaultStringDeserializer,
-//			collections.DefaultDeleter),
-//	}
-//}
-//
-//func addBoolQuestion(question string) uint32 {
-//	qId := _advanceQuestionId()
-//	q := Question{
-//		question:question,
-//		answers:[]Answer{ *newAnswer(qId, 0, "No"), *newAnswer(qId, 1, "Yes")},
-//	}
-//	collections.DefaultStructSerializer(_formatQuestionKey(qId), q)
-//	return qId
-//}
-//
-//
+	clearVoterFromQuestion(qId, address)
+	_addVoterToQuestionAnswer(qId, int(aId), address)
+}
