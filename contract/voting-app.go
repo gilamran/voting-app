@@ -46,7 +46,7 @@ func isOwner() bool {
  */
 
 type Voter struct {
-	weight uint32
+	Weight uint32
 }
 
 func _formatVotersName() string {
@@ -61,7 +61,7 @@ func getVoterWeight(address string) uint32 {
 	voterMap := collections.NewStructMap(_formatVotersName(), Voter{})
 	address = strings.ToLower(address)
 	if voterMap.Contains(address) {
-		return voterMap.Get(address).(Voter).weight
+		return voterMap.Get(address).(Voter).Weight
 	}
 	return 0
 }
@@ -85,7 +85,7 @@ func getAllVoters() string {
 	voterMap := _getVoterMap()
 	output := make([]VoterWeight, 0, voterMap.Count())
 	voterMap.Iterate(func(key string, item interface{}) bool {
-		output = append(output, VoterWeight{address: key, weight: voterMap.Get(key).(Voter).weight})
+		output = append(output, VoterWeight{address: key, weight: voterMap.Get(key).(Voter).Weight})
 		return true
 	})
 
@@ -174,7 +174,7 @@ func getQuestionAnswerVote(qId uint32, aId int) uint32 {
 	totalVote := uint32(0)
 	votersCollection.Iterate(func(id uint64, item interface{}) bool {
 		if voterMap.Contains(item.(string)) {
-			totalVote = safeuint32.Add(totalVote, voterMap.Get(item.(string)).(Voter).weight)
+			totalVote = safeuint32.Add(totalVote, voterMap.Get(item.(string)).(Voter).Weight)
 		}
 		return true
 	})
