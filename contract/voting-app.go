@@ -141,11 +141,11 @@ func _setQuestionAnswerStrings(id uint32, answers []string) {
 	state.WriteBytes(_formatQuestionAnswersKey(id), data)
 }
 
-func _formatAnswerVotesKey(qId uint32, aId int) string {
+func _formatAnswerVotesKey(qId uint32, aId uint32) string {
 	return fmt.Sprintf("_QnAVotes_%d_%d_", qId, aId)
 }
 
-func getQuestionAnswerVoters(qId uint32, aId int) string {
+func getQuestionAnswerVoters(qId uint32, aId uint32) string {
 	votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, aId),
 		collections.DefaultStringSerializer,
 		collections.DefaultStringDeserializer,
@@ -164,7 +164,7 @@ func getQuestionAnswerVoters(qId uint32, aId int) string {
 	return string(data)
 }
 
-func getQuestionAnswerVote(qId uint32, aId int) uint32 {
+func getQuestionAnswerVote(qId uint32, aId uint32) uint32 {
 	votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, aId),
 		collections.DefaultStringSerializer,
 		collections.DefaultStringDeserializer,
@@ -228,7 +228,7 @@ func clearVoterFromQuestion(qId uint32, address string) {
 	}
 }
 
-func _addVoterToQuestionAnswer(qId uint32, aId int, address string) {
+func _addVoterToQuestionAnswer(qId uint32, aId uint32, address string) {
 	votersCollection := collections.NewUniqueList(_formatAnswerVotesKey(qId, aId),
 		collections.DefaultStringSerializer,
 		collections.DefaultStringDeserializer,
@@ -245,5 +245,5 @@ func vote(qId uint32, aId uint32) {
 	}
 
 	clearVoterFromQuestion(qId, address)
-	_addVoterToQuestionAnswer(qId, int(aId), address)
+	_addVoterToQuestionAnswer(qId, aId, address)
 }
