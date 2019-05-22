@@ -1,20 +1,21 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/safemath/safeuint32"
 	"strings"
 
 	"github.com/orbs-network/contract-library-experiment/collections"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/address"
+	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/safemath/safeuint32"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/state"
 )
 
 var PUBLIC = sdk.Export(
 	getOwner,
-	getVoter, setVoterWeight,
+	getVoterWeight, setVoterWeight, getAllVoters,
 	getNumberOfQuestions, addBoolQuestion, addQuestion,
 	getQuestionString, getQuestionAnswerStrings, getQuestionAnswerVote, getQuestionAnswerVoters,
 	vote,
@@ -22,7 +23,7 @@ var PUBLIC = sdk.Export(
 var SYSTEM = sdk.Export(_init)
 
 func _init() {
-	state.WriteString(_formatOwnerKey(), fmt.Sprintf("%x", address.GetSignerAddress()))
+	state.WriteBytes(_formatOwnerKey(), address.GetSignerAddress())
 }
 
 /***
@@ -33,11 +34,11 @@ func _formatOwnerKey() []byte {
 }
 
 func getOwner() string {
-	return state.ReadString(_formatOwnerKey())
+	return fmt.Sprintf("%x", state.ReadBytes(_formatOwnerKey()))
 }
 
-func isOwner(address string) bool {
-	return strings.ToLower(address) == getOwner()
+func isOwner() bool {
+	return bytes.Compare(address.GetSignerAddress(), state.ReadBytes(_formatOwnerKey())) == 0
 }
 
 /***
@@ -52,18 +53,13 @@ func _formatVotersName() string {
 	return "_Voters_"
 }
 
-func getVoter(address string) string {
-	voters := collections.NewStructMap(_formatVotersName(), Voter{})
+func getVoterWeight(address string) uint32 {
+	voterMap := collections.NewStructMap(_formatVotersName(), Voter{})
 	address = strings.ToLower(address)
-	if voters.Contains(address) {
-		voter := voters.Get(address)
-		data, err := json.Marshal(voter)
-		if err != nil {
-			panic(err)
-		}
-		return string(data)
+	if voterMap.Contains(address) {
+		return voterMap.Get(address).(Voter).weight
 	}
-	return ""
+	return 0
 }
 
 func _getVoterMap() collections.Map {
@@ -78,6 +74,26 @@ func setVoterWeight(address string, weight uint32) {
 	} else {
 		voters.Put(address, Voter{weight})
 	}
+}
+
+type VoterWeight struct {
+	address string
+	weight  uint32
+}
+
+func getAllVoters() string {
+	voterMap := _getVoterMap()
+	output := make([]VoterWeight, 0, voterMap.Count())
+	voterMap.Iterate(func(key string, item interface{}) bool {
+		output = append(output, VoterWeight{address: key, weight: voterMap.Get(key).(Voter).weight})
+		return true
+	})
+
+	data, err := json.Marshal(output)
+	if err != nil {
+		panic(fmt.Sprintf("error while getting voter and weights: %s", err))
+	}
+	return string(data)
 }
 
 /***
@@ -175,6 +191,9 @@ func getQuestionAnswerVote(qId uint32, aId int) uint32 {
 }
 
 func addBoolQuestion(question string) uint32 {
+	if !isOwner() {
+		panic("User is not the owner of this questionnaire")
+	}
 	qId := getNumberOfQuestions()
 	_setQuestionString(qId, question)
 	_setQuestionAnswerStrings(qId, []string{"No", "Yes"})
@@ -183,6 +202,9 @@ func addBoolQuestion(question string) uint32 {
 }
 
 func addQuestion(question string, answers string) uint32 {
+	if !isOwner() {
+		panic("User is not the owner of this questionnaire")
+	}
 	qId := getNumberOfQuestions()
 	_setQuestionString(qId, question)
 	var answerArray []string
@@ -195,10 +217,13 @@ func addQuestion(question string, answers string) uint32 {
 	return qId
 }
 
+/***
+ * Vote
+ */
 func vote(qId uint32, aId uint32) {
 	address := strings.ToLower(fmt.Sprintf("%x", address.GetSignerAddress()))
-	voters := collections.NewStructMap(_formatVotersName(), Voter{})
-	if !voters.Contains(address) {
+	voterMap := collections.NewStructMap(_formatVotersName(), Voter{})
+	if !voterMap.Contains(address) {
 		panic(fmt.Sprintf("voter %s, is not allowed to vote in this contract", address))
 	} else {
 		_setQuestionAnswerVoters(qId, int(aId), address)
