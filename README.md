@@ -1,1 +1,1 @@
-# Voating App
+# Voting App

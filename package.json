@@ -1,7 +1,7 @@
 {
-  "name": "voating-app",
+  "name": "voting-app",
   "version": "0.0.1",
-  "description": "VoatingApp",
+  "description": "VotingApp",
   "main": "index.js",
   "engines": {
     "node": ">=10.6.0"

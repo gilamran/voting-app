@@ -3,7 +3,7 @@ import * as React from 'react';
 import { withRouter } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Home } from './components/Home';
-import { Voater } from './components/Voater';
+import { Voter } from './components/Voter';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -20,7 +20,7 @@ interface IProps extends WithStyles<typeof styles> {
 export const AppImpl = withStyles(styles)(({ classes, location }: IProps) => (
   <Switch location={location}>
     <Route exact path='/' render={() => <Home />} />
-    <Route path='/voater' render={({ match }) => <Voater />} />
+    <Route path='/voter' render={({ match }) => <Voter />} />
   </Switch>
 ));
 

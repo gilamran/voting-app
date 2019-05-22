@@ -8,4 +8,4 @@ const styles = (theme: Theme) =>
 
 interface IProps extends WithStyles<typeof styles> {}
 
-export const Voater = withStyles(styles)(({ classes }: IProps) => <div className={classes.root}>This is Voater</div>);
+export const Voter = withStyles(styles)(({ classes }: IProps) => <div className={classes.root}>This is Voter</div>);
