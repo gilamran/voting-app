@@ -15,7 +15,7 @@ import { App } from './App';
 import { Background } from './components/Background';
 import { Header } from './components/Header';
 
-const prismVersion = (window as any).prismVersion;
+const appVersion = (window as any).appVersion;
 
 const baseTheme = createMuiTheme({
   palette: {
@@ -56,7 +56,7 @@ export const AppRoot = withStyles(styles)(({ classes }: IProps) => (
   <BrowserRouter>
     <MuiThemeProvider theme={baseTheme}>
       <CssBaseline />
-      <Background prismVersion={prismVersion} />
+      <Background appVersion={appVersion} />
       <Header />
       <div className={classes.appContainer}>
         <App />
