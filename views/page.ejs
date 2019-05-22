@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Voating App</title>
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/assets/favicon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        var appVersion = '<%- APP_VERSION %>';
+    </script>
+    <body>
+        <div class="container">
+            <div id="app">Loading...</div>
+        </div>
+
+    <% if (process.env.MINIFY_JS_FILES === 'true') { %>       
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.7.0/umd/react.production.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.7.0/umd/react-dom.production.min.js"></script>
+
+    <% } else { %>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.7.0/umd/react.development.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.7.0/umd/react-dom.development.js"></script>
+    <% } %>
+		<script type="text/javascript" src="<%- manifest['vendors.js'] %>"></script>
+		<script type="text/javascript" src="<%- manifest['main.js'] %>"></script>
+</body>
+</html>
