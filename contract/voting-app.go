@@ -15,7 +15,7 @@ import (
 var PUBLIC = sdk.Export(
 	getOwner,
 	getVoter, setVoterWeight,
-	getNumberOfQuestions,
+	getNumberOfQuestions, getQuestionString,
 	addBoolQuestion,
 
 //	vote,
