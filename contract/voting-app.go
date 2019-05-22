@@ -200,7 +200,7 @@ func addQuestion(question string, answers string) uint32 {
 	qId := getNumberOfQuestions()
 	_setQuestionString(qId, question)
 	var answerArray []string
-	err := json.Unmarshal([]byte(answers), answerArray)
+	err := json.Unmarshal([]byte(answers), &answerArray)
 	if err != nil {
 		panic(fmt.Sprintf("error while adding answer strings %s", err))
 	}
@@ -215,7 +215,7 @@ func addQuestion(question string, answers string) uint32 {
 func clearVoterFromQuestion(qId uint32, address string) {
 	answersStr := getQuestionAnswerStrings(qId)
 	var answerArray []string
-	err := json.Unmarshal([]byte(answersStr), answerArray)
+	err := json.Unmarshal([]byte(answersStr), &answerArray)
 	if err != nil {
 		panic(fmt.Sprintf("error while clearing old vote for answer %d: error %s", qId, err))
 	}
