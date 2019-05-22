@@ -91,7 +91,7 @@ func getNumberOfQuestions() uint32 {
 	return state.ReadUint32(_formatNumberOfQuestionsKey())
 }
 
-func _generateNewQuestionId() uint32 {
+func _advanceQuestionId() uint32 {
 	qId := safeuint32.Add(getNumberOfQuestions(), 1)
 	state.WriteUint32(_formatNumberOfQuestionsKey(), qId)
 	return qId
@@ -175,14 +175,15 @@ func getQuestionAnswerVote(qId uint32, aId int) uint32 {
 }
 
 func addBoolQuestion(question string) uint32 {
-	qId := _generateNewQuestionId()
+	qId := getNumberOfQuestions()
 	_setQuestionString(qId, question)
 	_setQuestionAnswerStrings(qId, []string{"No", "Yes"})
+	_advanceQuestionId()
 	return qId
 }
 
 func addQuestion(question string, answers string) uint32 {
-	qId := _generateNewQuestionId()
+	qId := getNumberOfQuestions()
 	_setQuestionString(qId, question)
 	var answerArray []string
 	err := json.Unmarshal([]byte(answers), answerArray)
@@ -190,6 +191,7 @@ func addQuestion(question string, answers string) uint32 {
 		panic(fmt.Sprintf("error while adding answer strings %s", err))
 	}
 	_setQuestionAnswerStrings(qId, answerArray)
+	_advanceQuestionId()
 	return qId
 }
 
@@ -233,7 +235,7 @@ func vote(qId uint32, aId uint32) {
 //}
 //
 //func addBoolQuestion(question string) uint32 {
-//	qId := _generateNewQuestionId()
+//	qId := _advanceQuestionId()
 //	q := Question{
 //		question:question,
 //		answers:[]Answer{ *newAnswer(qId, 0, "No"), *newAnswer(qId, 1, "Yes")},
