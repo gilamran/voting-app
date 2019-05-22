@@ -14,6 +14,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { Background } from './components/Background';
 import { Header } from './components/Header';
+import { AccountInfo } from './components/AccountInfo';
 
 const appVersion = (window as any).appVersion;
 
@@ -41,7 +42,6 @@ const styles = (theme: Theme) =>
       margin: 'auto',
       paddingLeft: theme.spacing.unit * 2,
       paddingRight: theme.spacing.unit * 2,
-      position: 'relative',
       maxWidth: 1100,
     },
   });
@@ -55,6 +55,7 @@ export const AppRoot = withStyles(styles)(({ classes }: IProps) => (
       <Background appVersion={appVersion} />
       <Header />
       <div className={classes.appContainer}>
+        <AccountInfo />
         <App />
       </div>
     </MuiThemeProvider>
