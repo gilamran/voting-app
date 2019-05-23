@@ -77,15 +77,15 @@ func setVoterWeight(address string, weight uint32) {
 }
 
 type VoterWeight struct {
-	address string
-	weight  uint32
+	Address string
+	Weight  uint32
 }
 
 func getAllVoters() string {
 	voterMap := _getVoterMap()
 	output := make([]VoterWeight, 0, voterMap.Count())
 	voterMap.Iterate(func(key string, item interface{}) bool {
-		output = append(output, VoterWeight{address: key, weight: voterMap.Get(key).(Voter).Weight})
+		output = append(output, VoterWeight{Address: key, Weight: voterMap.Get(key).(Voter).Weight})
 		return true
 	})
 
