@@ -77,7 +77,7 @@ export const Home = withStyles(styles)(
 
     private async schedualReloadData(): Promise<void> {
       await this.reloadData();
-      // setTimeout(() => this.schedualReloadData(), 2000);
+      setTimeout(() => this.schedualReloadData(), 2000);
     }
 
     private async reloadData(): Promise<void> {

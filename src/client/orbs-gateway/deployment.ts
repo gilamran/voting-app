@@ -68,6 +68,7 @@ export async function vote(questionIdx: number, voteIdx: number): Promise<void> 
 }
 
 export async function setVoterWeight(voterAddress: string, weight: number): Promise<void> {
+  voterAddress = voterAddress.replace(/^0x/i, '');
   const voterAddressArg = argString(voterAddress);
   const weightArg = argUint32(weight);
   await callVotingContract('setVoterWeight', voterAddressArg, weightArg);

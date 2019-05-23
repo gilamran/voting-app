@@ -55,7 +55,7 @@ export const VotersList = withStyles(styles)(
                       {votersList.map((v, voterIdx) => (
                         <TableRow key={voterIdx}>
                           <TableCell component='th' scope='row'>
-                            {v.Address}
+                            0x{v.Address}
                           </TableCell>
                           <TableCell align='center'>{v.Weight}</TableCell>
                         </TableRow>
