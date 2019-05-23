@@ -9,6 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import * as React from 'react';
 import { IQuestion } from '../types/IQuestion';
 import { Fab } from '@material-ui/core';
+import { IVoter } from '../types';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -16,45 +17,46 @@ const styles = (theme: Theme) =>
   });
 
 interface IProps extends WithStyles<typeof styles> {
-  onNewQuestion(question: IQuestion): void;
+  onNewVoter(voter: IVoter): void;
 }
 
 interface IState {
   isOpen: boolean;
-  question: IQuestion;
+  voter: IVoter;
 }
 
-export const AddQuestion = withStyles(styles)(
+export const AddVoter = withStyles(styles)(
   class extends React.Component<IProps, IState> {
     constructor(props: IProps) {
       super(props);
-      this.state = { isOpen: false, question: { title: '', description: '' } };
+      this.state = { isOpen: false, voter: { address: '', weight: 0 } };
     }
 
     public render() {
       return (
         <div>
           <Fab variant='extended' color='secondary' onClick={() => this.handleClickOpen()}>
-            Add Question
+            Add Voter
           </Fab>
-          <Dialog open={this.state.isOpen} onClose={() => this.handleClose()} aria-labelledby='form-dialog-title'>
-            <DialogTitle>Ask a question</DialogTitle>
+          <Dialog open={this.state.isOpen} onClose={() => this.handleClose()}>
+            <DialogTitle>Add voter</DialogTitle>
             <DialogContent>
-              <DialogContentText>Please provide a title, and a detailed description.</DialogContentText>
+              <DialogContentText>Please provider a voter address and a weight.</DialogContentText>
               <TextField
-                value={this.state.question.title}
-                onChange={e => this.setTitle(e.currentTarget.value)}
+                value={this.state.voter.address}
+                onChange={e => this.setAddress(e.currentTarget.value)}
                 margin='dense'
-                id='title'
-                label='Title'
+                id='address'
+                label='Address'
                 fullWidth
               />
               <TextField
-                value={this.state.question.description}
-                onChange={e => this.setDescription(e.currentTarget.value)}
+                value={this.state.voter.weight}
+                onChange={e => this.setWeight(parseInt(e.currentTarget.value, 10))}
                 margin='dense'
-                id='desc'
-                label='Description'
+                id='weight'
+                label='Weight'
+                type='number'
                 fullWidth
               />
             </DialogContent>
@@ -63,7 +65,7 @@ export const AddQuestion = withStyles(styles)(
                 Cancel
               </Button>
               <Button variant='contained' onClick={() => this.handleSubmit()} color='secondary'>
-                Ask!
+                Add!
               </Button>
             </DialogActions>
           </Dialog>
@@ -71,12 +73,12 @@ export const AddQuestion = withStyles(styles)(
       );
     }
 
-    private setTitle(title: string) {
-      this.setState({ question: { title, description: this.state.question.description } });
+    private setAddress(address: string) {
+      this.setState({ voter: { address, weight: this.state.voter.weight } });
     }
 
-    private setDescription(description: string) {
-      this.setState({ question: { description, title: this.state.question.title } });
+    private setWeight(weight: number) {
+      this.setState({ voter: { weight, address: this.state.voter.address } });
     }
 
     private handleClickOpen() {
@@ -89,7 +91,7 @@ export const AddQuestion = withStyles(styles)(
 
     private handleSubmit() {
       this.setState({ isOpen: false });
-      this.props.onNewQuestion(this.state.question);
+      this.props.onNewVoter(this.state.voter);
     }
   },
 );

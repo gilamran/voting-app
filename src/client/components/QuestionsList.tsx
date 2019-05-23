@@ -13,31 +13,40 @@ const styles = (theme: Theme) =>
 
 interface IProps extends WithStyles<typeof styles> {
   onNewQuestion(question: IQuestion): void;
+  onVoted(questionIdx: number, answerIdx: number): void;
+  canAddQuestions: boolean;
   questionsList: IQuestion[];
 }
 
 export const QuestionsList = withStyles(styles)(
   class extends React.Component<IProps> {
     public render() {
-      const { classes, questionsList, onNewQuestion } = this.props;
+      const { classes, questionsList, onNewQuestion, canAddQuestions } = this.props;
+
       return (
         <div className={classes.root}>
           <Grid container spacing={16}>
-            <Grid item xs={12}>
-              <Typography variant={'h4'}>Questions</Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container spacing={16}>
-                {questionsList.map((q, idx) => (
-                  <Grid item xs={12} key={idx}>
-                    <Question question={q} />
+            {questionsList.length > 0 ? (
+              <div>
+                <Grid item xs={12}>
+                  <Typography variant={'h4'}>Questions</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Grid container spacing={16}>
+                    {questionsList.map((q, questionIdx) => (
+                      <Grid item xs={12} key={questionIdx}>
+                        <Question question={q} onVoted={answerIdx => this.props.onVoted(questionIdx, answerIdx)} />
+                      </Grid>
+                    ))}
                   </Grid>
-                ))}
+                </Grid>
+              </div>
+            ) : null}
+            {canAddQuestions ? (
+              <Grid item xs={12}>
+                <AddQuestion onNewQuestion={onNewQuestion} />
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <AddQuestion onNewQuestion={onNewQuestion} />
-            </Grid>
+            ) : null}
           </Grid>
         </div>
       );

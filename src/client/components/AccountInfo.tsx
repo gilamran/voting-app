@@ -1,15 +1,7 @@
+import { Card, CardContent, CardHeader, Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { getMyAccount } from '../orbs-gateway/my-account';
-import { Card, CardHeader, Typography, CardContent, Button } from '@material-ui/core';
-import {
-  uploadVotingContract,
-  isOwner,
-  getOwner,
-  getQuestion,
-  getNumberOfQuestions,
-  addBoolQuestion,
-} from '../orbs-gateway/deployment';
 import { uint8ArrayToHexString } from '../orbs-gateway/utils';
 
 const styles = (theme: Theme) =>
@@ -17,6 +9,11 @@ const styles = (theme: Theme) =>
     root: {
       marginTop: theme.spacing.unit * 3,
       marginBottom: theme.spacing.unit * 3,
+    },
+    field: {
+      display: 'inline-block',
+      minWidth: 100,
+      paddingBottom: 6,
     },
   });
 
@@ -28,13 +25,18 @@ export const AccountInfo = withStyles(styles)(({ classes }: IProps) => (
   <Card className={classes.root}>
     <CardHeader title='Account Info' />
     <CardContent>
-      <Typography>Public Key: {uint8ArrayToHexString(myAccount.publicKey)}</Typography>
-      <Typography>Address: {myAccount.address}</Typography>
-      <Button onClick={() => uploadVotingContract()}>Upload Voting contract</Button>
-      <Button onClick={() => isOwner()}>Is Owner</Button>
-      <Button onClick={() => addBoolQuestion({ title: 'bool title', description: 'bool desc' })}>
-        Add Bool Question
-      </Button>
+      <Typography>
+        <div className={classes.field}>
+          <strong>Public Key:</strong>
+        </div>
+        {uint8ArrayToHexString(myAccount.publicKey)}
+      </Typography>
+      <Typography>
+        <div className={classes.field}>
+          <strong>Address:</strong>
+        </div>
+        {myAccount.address}
+      </Typography>
     </CardContent>
   </Card>
 ));

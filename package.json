@@ -49,6 +49,7 @@
   "dependencies": {
     "@types/dotenv": "^6.1.0",
     "@types/find-up": "^2.1.1",
+    "chart.js": "^2.8.0",
     "cross-env": "^5.2.0",
     "dotenv": "^6.2.0",
     "ejs": "^2.6.1",
@@ -56,6 +57,7 @@
     "find-up": "^3.0.0",
     "http-proxy-middleware": "^0.19.1",
     "orbs-client-sdk": "0.0.6",
+    "react-chartjs-2": "^2.7.6",
     "request": "^2.88.0",
     "tslib": "^1.9.3"
   },
