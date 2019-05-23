@@ -7,8 +7,6 @@ import { uint8ArrayToHexString } from '../orbs-gateway/utils';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      marginTop: theme.spacing.unit * 3,
-      marginBottom: theme.spacing.unit * 3,
       backgroundColor: '#f3f3f3',
     },
     field: {

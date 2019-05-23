@@ -19,6 +19,7 @@ import { AddVoter } from './AddVoter';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
+      marginTop: theme.spacing.unit * 3,
       marginBottom: theme.spacing.unit * 3,
     },
     table: {},

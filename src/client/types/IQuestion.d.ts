@@ -6,5 +6,6 @@ export interface IAnswer {
 export interface IQuestion {
   title: string;
   description: string;
-  answers: IAnswer[];
+  imageUrl?: string;
+  answers?: IAnswer[];
 }

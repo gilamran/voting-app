@@ -13,6 +13,9 @@ const styles = (theme: Theme) =>
       display: 'flex',
       minHeight: 120,
     },
+    img: {
+      height: 180,
+    },
     description: {
       flex: 1,
     },
@@ -35,8 +38,8 @@ export const Question = withStyles(styles)(({ classes, question, onVoted, canVot
     datasets: [
       {
         data: question.answers.map(a => a.totalVotes),
-        backgroundColor: ['#36A2EB', '#FF6384'],
-        hoverBackgroundColor: ['#36A2EB', '#FF6384'],
+        backgroundColor: ['#FF2010', '#01ff01'],
+        hoverBackgroundColor: ['#FF2010', '#01ff01'],
       },
     ],
   };
@@ -48,6 +51,7 @@ export const Question = withStyles(styles)(({ classes, question, onVoted, canVot
       <CardContent className={classes.content}>
         <div className={classes.dataContainer}>
           <Typography className={classes.description}>{question.description}</Typography>
+          {question.imageUrl ? <img className={classes.img} src={question.imageUrl} /> : null}
           {hasAnswers > 0 ? (
             <div>
               <Doughnut data={data} />

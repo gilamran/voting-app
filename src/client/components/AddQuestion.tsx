@@ -28,7 +28,7 @@ export const AddQuestion = withStyles(styles)(
   class extends React.Component<IProps, IState> {
     constructor(props: IProps) {
       super(props);
-      this.state = { isOpen: false, question: { title: '', description: '' } };
+      this.state = { isOpen: false, question: { title: '', description: '', imageUrl: '' } };
     }
 
     public render() {
@@ -57,6 +57,14 @@ export const AddQuestion = withStyles(styles)(
                 label='Description'
                 fullWidth
               />
+              <TextField
+                value={this.state.question.imageUrl}
+                onChange={e => this.setImageUrl(e.currentTarget.value)}
+                margin='dense'
+                id='imageUrl'
+                label='Image Url'
+                fullWidth
+              />
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.handleClose()} color='secondary'>
@@ -72,11 +80,15 @@ export const AddQuestion = withStyles(styles)(
     }
 
     private setTitle(title: string) {
-      this.setState({ question: { title, description: this.state.question.description } });
+      this.setState({ question: { ...this.state.question, title } });
     }
 
     private setDescription(description: string) {
-      this.setState({ question: { description, title: this.state.question.title } });
+      this.setState({ question: { ...this.state.question, description } });
+    }
+
+    private setImageUrl(imageUrl: string) {
+      this.setState({ question: { ...this.state.question, imageUrl } });
     }
 
     private handleClickOpen() {

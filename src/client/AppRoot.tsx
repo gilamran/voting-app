@@ -11,7 +11,7 @@ import {
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import * as React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { App } from './App';
+import { Home } from './components/Home';
 import { Background } from './components/Background';
 import { Header } from './components/Header';
 import { AccountInfo } from './components/AccountInfo';
@@ -42,7 +42,7 @@ const styles = (theme: Theme) =>
       margin: 'auto',
       paddingLeft: theme.spacing.unit * 2,
       paddingRight: theme.spacing.unit * 2,
-      maxWidth: 1100,
+      maxWidth: 2000,
     },
   });
 
@@ -55,8 +55,7 @@ export const AppRoot = withStyles(styles)(({ classes }: IProps) => (
       <Background appVersion={appVersion} />
       <Header />
       <div className={classes.appContainer}>
-        <AccountInfo />
-        <App />
+        <Home />
       </div>
     </MuiThemeProvider>
   </BrowserRouter>

@@ -15,10 +15,14 @@ import {
 } from '../orbs-gateway/deployment';
 import { IVoter } from '../types/IVoter';
 import { getMyAccount } from '../orbs-gateway/my-account';
+import { AccountInfo } from './AccountInfo';
+import { Grid } from '@material-ui/core';
 
 const styles = (theme: Theme) =>
   createStyles({
-    root: {},
+    root: {
+      marginTop: theme.spacing.unit * 3,
+    },
   });
 
 interface IProps extends WithStyles<typeof styles> {}
@@ -47,18 +51,25 @@ export const Home = withStyles(styles)(
       const { classes } = this.props;
       return (
         <div className={classes.root}>
-          <VotersList
-            onNewVoter={v => this.onNewVoter(v)}
-            canAddVoter={this.state.owner}
-            votersList={this.state.votersList}
-          />
-          <QuestionsList
-            canAddQuestions={this.state.owner}
-            canVote={this.calcCanVote()}
-            questionsList={this.state.questionsList}
-            onNewQuestion={q => this.onNewQuestion(q)}
-            onVoted={(qId, answer) => this.onVoted(qId, answer)}
-          />
+          <Grid container spacing={16} className={classes.root}>
+            <Grid item xs={4}>
+              <AccountInfo />
+              <VotersList
+                onNewVoter={v => this.onNewVoter(v)}
+                canAddVoter={this.state.owner}
+                votersList={this.state.votersList}
+              />
+            </Grid>
+            <Grid item xs={8}>
+              <QuestionsList
+                canAddQuestions={this.state.owner}
+                canVote={this.calcCanVote()}
+                questionsList={this.state.questionsList}
+                onNewQuestion={q => this.onNewQuestion(q)}
+                onVoted={(qId, answer) => this.onVoted(qId, answer)}
+              />
+            </Grid>
+          </Grid>
         </div>
       );
     }
