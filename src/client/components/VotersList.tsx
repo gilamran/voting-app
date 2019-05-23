@@ -22,6 +22,10 @@ const styles = (theme: Theme) =>
       marginTop: theme.spacing.unit * 3,
       marginBottom: theme.spacing.unit * 3,
     },
+    actions: {
+      marginLeft: theme.spacing.unit,
+      marginBottom: theme.spacing.unit,
+    },
     table: {},
     card: {
       backgroundColor: '#f3f3f3',
@@ -66,7 +70,7 @@ export const VotersList = withStyles(styles)(
                 )}
               </CardContent>
               {canAddVoter ? (
-                <CardActions>
+                <CardActions className={classes.actions}>
                   <AddVoter onNewVoter={onNewVoter} />
                 </CardActions>
               ) : null}

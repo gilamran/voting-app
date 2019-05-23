@@ -1,4 +1,4 @@
-import { Card, CardActionArea, CardContent, CardHeader, Grid } from '@material-ui/core';
+import { Card, CardActions, CardContent, CardHeader, Grid } from '@material-ui/core';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { IQuestion } from '../types/IQuestion';
@@ -10,6 +10,10 @@ const styles = (theme: Theme) =>
     root: {},
     card: {
       backgroundColor: '#f3f3f3',
+    },
+    actions: {
+      marginLeft: theme.spacing.unit,
+      marginBottom: theme.spacing.unit,
     },
   });
 
@@ -47,9 +51,9 @@ export const QuestionsList = withStyles(styles)(
                 </Grid>
               </CardContent>
               {canAddQuestions ? (
-                <CardActionArea>
+                <CardActions className={classes.actions}>
                   <AddQuestion onNewQuestion={onNewQuestion} />
-                </CardActionArea>
+                </CardActions>
               ) : null}
             </Card>
           </Grid>
