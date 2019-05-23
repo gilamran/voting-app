@@ -34,7 +34,7 @@ export const Question = withStyles(styles)(({ classes, question, onVoted, canVot
 
   console.log('canVote', canVote);
   const data = {
-    labels: question.answers.map(a => a.title),
+    labels: question.answers.map(a => `${a.title} (${a.voted ? a.voted.length : '0'})`),
     datasets: [
       {
         data: question.answers.map(a => a.totalVotes),
