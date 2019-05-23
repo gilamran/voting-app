@@ -8,8 +8,10 @@ import { Doughnut } from 'react-chartjs-2';
 const styles = (theme: Theme) =>
   createStyles({
     root: {},
+    content: {},
     dataContainer: {
       display: 'flex',
+      minHeight: 120,
     },
     description: {
       flex: 1,
@@ -18,14 +20,16 @@ const styles = (theme: Theme) =>
 
 interface IProps extends WithStyles<typeof styles> {
   question: IQuestion;
+  canVote: boolean;
   onVoted(answerIdx: number): void;
 }
 
-export const Question = withStyles(styles)(({ classes, question, onVoted }: IProps) => {
+export const Question = withStyles(styles)(({ classes, question, onVoted, canVote }: IProps) => {
   if (question.answers.length === 0) {
     return null;
   }
 
+  console.log('canVote', canVote);
   const data = {
     labels: question.answers.map(a => a.title),
     datasets: [
@@ -37,17 +41,20 @@ export const Question = withStyles(styles)(({ classes, question, onVoted }: IPro
     ],
   };
 
+  const hasAnswers = question.answers.reduce((prev, cur) => prev + cur.totalVotes, 0) > 0;
   return (
     <Card className={classes.root}>
       <CardHeader title={question.title} />
-      <CardContent>
+      <CardContent className={classes.content}>
         <div className={classes.dataContainer}>
           <Typography className={classes.description}>{question.description}</Typography>
-          <div>
-            <Doughnut data={data} />
-          </div>
+          {hasAnswers > 0 ? (
+            <div>
+              <Doughnut data={data} />
+            </div>
+          ) : null}
         </div>
-        <Vote question={question} onVoted={onVoted} />
+        {canVote ? <Vote question={question} onVoted={onVoted} /> : null}
       </CardContent>
     </Card>
   );

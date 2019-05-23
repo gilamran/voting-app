@@ -2,6 +2,7 @@ import * as Orbs from 'orbs-client-sdk/dist/index.es.js';
 import { IQuestion } from '../types/IQuestion';
 import { CONTRACT_CODE } from './contract';
 import { getMyAccount } from './my-account';
+import { IVoter } from '../types/IVoter';
 
 const { argUint32, argString, argBytes, Client } = Orbs;
 
@@ -72,9 +73,9 @@ export async function setVoterWeight(voterAddress: string, weight: number): Prom
   await callVotingContract('setVoterWeight', voterAddressArg, weightArg);
 }
 
-export async function getAllVoters(): Promise<void> {
+export async function getAllVoters(): Promise<IVoter[]> {
   const txResult = await callVotingContract('getAllVoters');
-  return txResult.outputArguments[0].value;
+  return JSON.parse(txResult.outputArguments[0].value);
 }
 
 export async function getQuestion(questionIdx: number): Promise<IQuestion> {

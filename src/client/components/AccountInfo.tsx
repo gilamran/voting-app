@@ -9,6 +9,7 @@ const styles = (theme: Theme) =>
     root: {
       marginTop: theme.spacing.unit * 3,
       marginBottom: theme.spacing.unit * 3,
+      backgroundColor: '#f3f3f3',
     },
     field: {
       display: 'inline-block',

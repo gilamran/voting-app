@@ -29,7 +29,7 @@ export const AddVoter = withStyles(styles)(
   class extends React.Component<IProps, IState> {
     constructor(props: IProps) {
       super(props);
-      this.state = { isOpen: false, voter: { address: '', weight: 0 } };
+      this.state = { isOpen: false, voter: { Address: '', Weight: 0 } };
     }
 
     public render() {
@@ -43,7 +43,7 @@ export const AddVoter = withStyles(styles)(
             <DialogContent>
               <DialogContentText>Please provider a voter address and a weight.</DialogContentText>
               <TextField
-                value={this.state.voter.address}
+                value={this.state.voter.Address}
                 onChange={e => this.setAddress(e.currentTarget.value)}
                 margin='dense'
                 id='address'
@@ -51,7 +51,7 @@ export const AddVoter = withStyles(styles)(
                 fullWidth
               />
               <TextField
-                value={this.state.voter.weight}
+                value={this.state.voter.Weight}
                 onChange={e => this.setWeight(parseInt(e.currentTarget.value, 10))}
                 margin='dense'
                 id='weight'
@@ -73,12 +73,12 @@ export const AddVoter = withStyles(styles)(
       );
     }
 
-    private setAddress(address: string) {
-      this.setState({ voter: { address, weight: this.state.voter.weight } });
+    private setAddress(Address: string) {
+      this.setState({ voter: { Address, Weight: this.state.voter.Weight } });
     }
 
-    private setWeight(weight: number) {
-      this.setState({ voter: { weight, address: this.state.voter.address } });
+    private setWeight(Weight: number) {
+      this.setState({ voter: { Weight, Address: this.state.voter.Address } });
     }
 
     private handleClickOpen() {
@@ -90,7 +90,7 @@ export const AddVoter = withStyles(styles)(
     }
 
     private handleSubmit() {
-      this.setState({ isOpen: false });
+      this.setState({ isOpen: false, voter: { Address: '', Weight: 0 } });
       this.props.onNewVoter(this.state.voter);
     }
   },

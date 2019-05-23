@@ -88,7 +88,7 @@ export const AddQuestion = withStyles(styles)(
     }
 
     private handleSubmit() {
-      this.setState({ isOpen: false });
+      this.setState({ isOpen: false, question: { title: '', description: '' } });
       this.props.onNewQuestion(this.state.question);
     }
   },
