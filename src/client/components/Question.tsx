@@ -52,11 +52,7 @@ export const Question = withStyles(styles)(({ classes, question, onVoted, canVot
         <div className={classes.dataContainer}>
           <Typography className={classes.description}>{question.description}</Typography>
           {question.imageUrl ? <img className={classes.img} src={question.imageUrl} /> : null}
-          {hasAnswers > 0 ? (
-            <div>
-              <Doughnut data={data} />
-            </div>
-          ) : null}
+          <div style={{ width: 300 }}>{hasAnswers > 0 ? <Doughnut data={data} /> : null}</div>
         </div>
         {canVote ? <Vote question={question} onVoted={onVoted} /> : null}
       </CardContent>
