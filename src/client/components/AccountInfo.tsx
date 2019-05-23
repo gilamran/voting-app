@@ -28,7 +28,7 @@ export const AccountInfo = withStyles(styles)(({ classes }: IProps) => (
         <div className={classes.field}>
           <strong>Public Key:</strong>
         </div>
-        {uint8ArrayToHexString(myAccount.publicKey)}
+        {uint8ArrayToHexString(myAccount.publicKey).substring(0, 16)}...
       </Typography>
       <Typography>
         <div className={classes.field}>
