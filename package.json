@@ -53,7 +53,7 @@
     "cross-env": "^5.2.0",
     "dotenv": "^6.2.0",
     "ejs": "^2.6.1",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "find-up": "^3.0.0",
     "http-proxy-middleware": "^0.19.1",
     "orbs-client-sdk": "0.0.6",
